@@ -42,5 +42,30 @@ class TestKauppa(unittest.TestCase):
         self.kauppa.tilimaksu("pekka", "12345")
         self.pankki_mock.tilisiirto.assert_called_with("pekka", 42, "12345", ANY, 5)
 
-        
+    def test_aloita_asiointi_nollaa_edellisen_ostoksen(self):  ## ei toimi
+        self.kauppa.aloita_asiointi()
+        self.kauppa.lisaa_koriin(1)
+        self.kauppa.tilimaksu("pekka", "12345")
+        #toinen kauppa
+        self.kauppa.aloita_asiointi() 
+        self.kauppa.lisaa_koriin(2)
+        self.kauppa.tilimaksu("pekka", "12345")
+        self.pankki_mock.tilisiirto.assert_called_with("pekka", 42, "12345", ANY, 3)
+
+    def test_uusi_viitenumero_jokaiselle_maksutapahtumalle(self): ## ei toimi 
+        self.kauppa.aloita_asiointi()
+        self.kauppa.lisaa_koriin(1)
+        self.kauppa.tilimaksu("pekka", "12345")
+        self.kauppa.aloita_asiointi()
+        self.kauppa.lisaa_koriin(1)
+        self.kauppa.tilimaksu("matti", "67890")
+        self.pankki_mock.tilisiirto.assert_any_call("pekka", 42, "12345", ANY, 5)
+        self.pankki_mock.tilisiirto.assert_any_call("matti", 42, "67890", ANY, 5)
+
+    def test_tilanteet_jotka_eivat_ole_vielae_testattu(self):
+        self.kauppa.aloita_asiointi()
+        self.kauppa.lisaa_koriin(1)
+        self.kauppa.poista_korista(1)
+        self.kauppa.tilimaksu("pekka", "12345")
+        self.pankki_mock.tilisiirto.assert_called_with("pekka", 42, "12345", ANY, 0)
        

@@ -1,6 +1,6 @@
 # Retrospektiivitekniikat: Start, Stop, Continue, More of, Less of Wheel ja Glad, Sad, Mad
 
-Retrospektiivi on tiimin tapaaminen, jossa tarkastellaan projektin tai sprintin aikana tapahtuneita asioita. Sen tavoitteena on tunnistaa onnistumiset, kehityskohteet ja luoda suunnitelma tulevien iterointien parantamiseksi.
+Retrospektiivi on tiimin tapaaminen missä katsotaan projektin tai sprintin aikana tapahtuneita asioita. Sen tavoitteena on tunnistaa kaikki onnistumiset, kehityskohteet ja luoda suunnitelma tulevien iteraatioiden kehittämiseksi.
 
 **Start, Stop, Continue, More of, Less of Wheel** -tekniikka auttaa tiimiä arvioimaan prosessiaan viidessä kategoriassa:
 - **Start:** Mitä uusia asioita pitäisi alkaa tekemään?

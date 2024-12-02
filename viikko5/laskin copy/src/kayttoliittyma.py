@@ -13,25 +13,33 @@ class Command:
     def __init__(self, sovelluslogiikka, lue_syote):
         self._sovelluslogiikka = sovelluslogiikka
         self._lue_syote = lue_syote
+        self._previous_value = None
 
     def suorita(self):
         raise NotImplementedError
+    
+    def kumoa(self):
+        if self._previous_value is not None:
+            self._sovelluslogiikka.aseta_arvo(self._previous_value)
 
 
 class SummaCommand(Command):
     def suorita(self):
+        self._previous_value = self._sovelluslogiikka.arvo()
         arvo = int(self._lue_syote())
         self._sovelluslogiikka.plus(arvo)
 
 
 class ErotusCommand(Command):
     def suorita(self):
+        self._previous_value = self._sovelluslogiikka.arvo()
         arvo = int(self._lue_syote())
         self._sovelluslogiikka.miinus(arvo)
 
 
 class NollausCommand(Command):
     def suorita(self):
+        self._previous_value = self._sovelluslogiikka.arvo()
         self._sovelluslogiikka.nollaa()
 
 
@@ -44,6 +52,7 @@ class Kayttoliittyma:
     def __init__(self, sovelluslogiikka, root):
         self._sovelluslogiikka = sovelluslogiikka
         self._root = root
+        self._edellinen_komento = None
 
         self._komennot = {
             Komento.SUMMA: SummaCommand(sovelluslogiikka, self._lue_syote),
@@ -82,7 +91,7 @@ class Kayttoliittyma:
             master=self._root,
             text="Kumoa",
             state=constants.DISABLED,
-            command=lambda: self._suorita_komento(Komento.KUMOA)
+            command=self._kumoa
         )
 
         tulos_teksti.grid(columnspan=4)
@@ -98,6 +107,7 @@ class Kayttoliittyma:
     def _suorita_komento(self, komento):
         komento_olio = self._komennot[komento]
         komento_olio.suorita()
+        self._edellinen_komento = komento_olio
         self._kumoa_painike["state"] = constants.NORMAL
 
         if self._sovelluslogiikka.arvo() == 0:
@@ -107,3 +117,9 @@ class Kayttoliittyma:
 
         self._syote_kentta.delete(0, constants.END)
         self._arvo_var.set(self._sovelluslogiikka.arvo())
+
+    def _kumoa(self):
+        if self._edellinen_komento:
+            self._edellinen_komento.kumoa()
+            self._arvo_var.set(self._sovelluslogiikka.arvo())
+            self._kumoa_painike["state"] = constants.DISABLED
